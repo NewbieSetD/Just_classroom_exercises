@@ -1,0 +1,29 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+public class ReadForFile
+{
+	void ReadFile(File nameF){
+		String OutData="";
+		try
+		{
+			Scanner read = new Scanner(nameF);
+			while (read.hasNext())
+			{
+				OutData = read.nextLine();
+				System.out.println(OutData);
+			}
+		}
+		catch (FileNotFoundException gyg)
+		{System.out.println("Nothing");}
+	}
+	public static void main(String[] args) 
+	{
+		String name="D:\\download h\\aDownload\\CTest\\Graparry.cpp";
+		//String name="data.txt";
+		File nameF = new File(name);
+		ReadForFile fun = new ReadForFile();
+		fun.ReadFile(nameF);
+		//System.out.println(Dataout);
+	}
+}  

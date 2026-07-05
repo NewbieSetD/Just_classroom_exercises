@@ -1,0 +1,119 @@
+import java.util.Scanner;
+import java.util.HashSet;
+class Collection_EX1 
+{
+	void InIsA(HashSet<String> NamE){
+		Scanner ins = new Scanner(System.in);
+		char MenuH=' ';
+		for (; ; )
+		{
+			System.out.println("Now we Have Data: "+NamE.size());
+			System.out.println("Pass[A]for add ||[D] for Del||[S] for Saerch||[E] for Edit||[X] for End");
+			MenuH = ins.next().charAt(0);
+			if (MenuH=='A'||MenuH=='a')
+			{
+			  System.out.print("What your name: ");
+			  NamE.add(ins.next());
+			  System.out.println("Input Pass");
+			}
+			else if (MenuH=='D'||MenuH=='d')
+			{
+				DelData(NamE,ins);
+			}
+			else if (MenuH=='S'||MenuH=='s')
+			{
+				SaerchData(NamE,ins);
+			}
+			else if (MenuH=='E'||MenuH=='e')
+			{
+				EditData(NamE,ins);
+			}
+			else if (MenuH=='X'||MenuH=='x')
+			{
+				System.out.println("Done!");
+				break;
+			}
+			else{
+				System.out.println("What a about::");
+			}
+		}
+		
+	}
+	public static void main(String[] args) 
+	{
+		Collection_EX1 fun = new Collection_EX1();
+		System.out.println("Welcome to Name List:");
+		HashSet<String> NamE = new HashSet<String>();
+		fun.InIsA(NamE);
+		fun.OutData(NamE);
+	}
+	void DelData(HashSet<String> NamE,Scanner ins){
+		System.out.print("What Data you want to remove:");
+		String name = ins.next();
+		if (NamE.remove(name))
+		{
+			System.out.println("Input Pass!");
+		}
+		else{
+			System.out.println("Is dont Have it Before!");
+		}
+	}
+	void SaerchData(HashSet<String> NamE,Scanner ins){
+		System.out.print("What Data you Looking for:");
+		String name = ins.next();
+		int index;
+		if (NamE.contains(name))
+		{
+			index=SaerchData(NamE,name);
+			System.out.println("Your name is on Data: "+name+" :in index: "+index);
+		}
+		else{
+			System.out.println("Is dont Have it Before!");
+		}
+	}
+	void EditData(HashSet<String> NamE,Scanner ins){
+		System.out.print("What Data you want to Edit:");
+		String name = ins.next();
+		String objname="";
+		if (NamE.contains(name))
+		{
+			objname=SaerchDataName(NamE,objname);
+			NamE.remove(name);
+			System.out.print("Enter you new name: ");
+			name = ins.next();
+			NamE.add(name);
+			System.out.println("Your name Before: "+objname+" :After: "+name);
+		}
+		else{
+			System.out.println("Is dont Have it Before!");
+		}
+	}
+	int SaerchData(HashSet<String> NamE,String Obj){
+		String Get="";
+		int inline=0;
+		for (int i=0;i<NamE.size();i++ )
+		{
+			Get=NamE.get(i);
+			if (Obj.equals(Get))
+			{
+				inline=i+1;
+				break;
+			}
+		}
+		return inline;
+	}
+	String SaerchDataName(HashSet<String> NamE,String Obj){
+		String Get="";
+		for (byte i=0;i<NamE.size() ;i++ )
+		{
+			Get=NamE.get(i);
+			if (Obj.equals(Get))
+			{
+				break;
+			}
+		}return Get;
+	}
+	void OutData(HashSet<String> NamE){
+		
+	}
+}

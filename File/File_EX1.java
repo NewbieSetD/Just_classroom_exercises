@@ -1,0 +1,54 @@
+import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.FileNotFoundException;
+class File_EX1 //Done
+{
+	void Fileing(File MainFile,Scanner inp){
+		try
+		{
+			String Inline="";
+			FileWriter IntoFi = new FileWriter(MainFile);
+			for (; ; )
+			{
+				Inline=inp.nextLine();
+				if (Inline.equals("stop"))
+				{
+					break;
+				}
+				IntoFi.write(Inline);
+			}
+			
+			IntoFi.close();
+		}
+		catch (IOException exr)
+		{}
+		
+	}
+	public static void main(String[] args) //Here
+	{
+		File_EX1 fun = new File_EX1();
+		Scanner inp = new Scanner(System.in);
+		String nameFile="data.txt";
+		File MainFile = new File(nameFile);
+		System.out.print("Input:: ");
+		fun.Fileing(MainFile,inp);
+		fun.OutFile(MainFile);
+		//System.out.println("Hello World!");
+	}
+	void OutFile(File MainFile){
+		try
+		{
+			String Output="";
+			Scanner Out = new Scanner(MainFile);
+			while (Out.hasNext())
+			{
+				Output=Out.nextLine();
+				System.out.println(Output);
+			}Out.close();
+		}
+		catch (FileNotFoundException kiki)
+		{System.out.println(kiki);}
+	}
+}
