@@ -1,0 +1,84 @@
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
+class Ex1_Final //Done!!
+{
+	void InputFile(String nameFile,ArrayList<String> StrLine){
+		//String OutFile="";
+		try
+		{
+			Scanner scFlie = new Scanner(new File(nameFile));
+			while (scFlie.hasNextLine())
+			{
+				StrLine.add(scFlie.nextLine());
+				//System.out.println(OutFile);
+			}
+			scFlie.close();
+		}
+		catch (FileNotFoundException exx)
+		{System.out.println(exx);}
+	}
+	public static void main(String[] args) 
+	{
+		Ex1_Final fun = new Ex1_Final();
+		
+		String nameFile="Ex1_read_in1.txt",OutputFile,dataoutput;
+		ArrayList<String> StrLine =new  ArrayList<String>();
+		ArrayList<String> NumLine =new  ArrayList<String>();
+		fun.InputFile(nameFile,StrLine);
+		//System.out.println(StrLine);//Done
+		//System.out.println(OutputFile);
+		fun.Taring(StrLine,NumLine,nameFile);
+		//fun.PrintOn(dataoutput,nameFile);
+	}
+	void Taring(ArrayList<String> StrLine,ArrayList<String> NumLine,String nameFile){
+			for (byte i =0;i<StrLine.size() ;i++ )
+				{
+					String Input=StrLine.get(i);
+					String Convet = Input.replace(" ", "+");
+					String Output="";
+			//System.out.print(Convet);
+					char Tran[] = Convet.toCharArray();
+					int numbeic[] = new int[Tran.length];
+				//System.out.print(" "+Tran[i]);
+					for (byte j =0;j< Tran.length;j++ )
+					{
+						if (Tran[j]=='+')
+							{
+								Output=Output+"+";
+							}
+						else if (Character.isDefined(Tran[j]))
+							{
+								numbeic[j]=Character.hashCode(Tran[j]);
+								Output=Output+(Integer.toString(numbeic[j]));
+							}
+					}
+					NumLine.add(Output);
+					//System.out.println(NumLine);
+				}PrintOn(NumLine,nameFile);
+				//System.out.println(Output);
+				
+	}
+	void PrintOn(ArrayList<String> NumLine,String nameFile){
+		try
+		{
+			byte oi=1;
+			String Megs="";
+			FileWriter Wri = new FileWriter(nameFile,true);
+			for (byte i =0;i<NumLine.size() ;i++ )
+			{	
+				Megs=NumLine.get(i);
+				Wri.write("\n"+oi+" =\t"+Megs+".");
+				oi++;
+				Wri.write("\n");
+			}
+			Wri.close();
+		}
+		catch (IOException ete)
+		{}
+		
+	}
+}

@@ -1,0 +1,17 @@
+cat bird butterfly ant bird ant ant
+bird cat termite stop
+
+
+5 Animal 
+cat	2
+bird	3
+butterfly	1
+ant	3
+termite	1
+
+5 Animal 
+cat	2
+bird	3
+butterfly	1
+ant	3
+termite	1
