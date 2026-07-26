@@ -30,9 +30,19 @@ public class Children extends People{
         public People getMother(){
             return mother;
         }
-//     public String getWorkplace(){
-//         return super.getWorkplace();
-//     }
-//     public boolean equals(Object obj){}
+        @Override
+        public String getWorkplace(){
+            return school;
+        }
+        @Override
+        public boolean equals(Object obj){
+            if(obj == this.mother){
+                System.out.println("This is the mother of "+this.name);
+                return true;
+            }else{
+                System.out.println("This is not the mother of "+this.name);
+                return false;
+            }
+        }
 //     public String respectTo(People p){}
  }

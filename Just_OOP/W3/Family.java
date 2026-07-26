@@ -8,8 +8,12 @@ class Family{
         ("Brooklyn", 'M',beckham, victoria,"Beckham Academy");
         Children harper   = new Children
         ("Harper", 'F',beckham, victoria,"Harper's School");
-        System.out.println(brooklyn.getFather()); 
-        System.out.println(harper.getMother());
+        System.out.println(brooklyn.getWorkplace()); 
+        System.out.println(harper.getWorkplace());
+        System.out.println(beckham.getWorkplace());
+        System.out.println(victoria.getWorkplace());
+        harper.equals(beckham); 
+        harper.equals(victoria); 
     }
 
 }
