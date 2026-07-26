@@ -18,20 +18,21 @@ class DemoPerson
             // System.out.println(dome.getPhoneNumber(ken));
             // System.out.println(dome.getPhoneNumber(ploy));
             // System.out.println(dome.isHaveFan(ploy));
-            dome.setFan(ploy);
+            //dome.setFan(ploy);
+            System.out.println(dome);
 
             // System.out.println(dome.toString());
             //dome.setFan(ann);
             // System.out.println(dome.getFan(may));
             // System.out.println(dome.getFan(ploy));
-            dome.setGig(may);
-            dome.setGig(ken);
-            dome.setGig(fon);
+            // dome.setGig(may);
+            // dome.setGig(ken);
+            // dome.setGig(fon);
             //System.out.println(dome.getPersonInfo());
-            System.out.println(dome.getGig(ploy));
-            System.out.println(dome.getGig(ken));
-            dome.removeGig();
-            System.out.println(dome.getGig(ken));
+            // System.out.println(dome.getGig(ploy));
+            // System.out.println(dome.getGig(ken));
+            // dome.removeGig();
+            // System.out.println(dome.getGig(ken));
             //System.out.println(dome.getPersonInfo());
         }
         
