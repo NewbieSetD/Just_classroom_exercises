@@ -1,5 +1,5 @@
 //package Just_OOP.W3;
-public class Children extends People{
+public class Children extends People implements GoodChild {
     private People father;
     private People mother;
     private String school;
@@ -44,5 +44,16 @@ public class Children extends People{
                 return false;
             }
         }
-//     public String respectTo(People p){}
+     public String respectTo(People ple){
+        String politeSuffix = (gender=='M')? "Sir" : "Ma'am";
+        if(ple == this.father){
+            return "Hello "+politeSuffix+" Father";
+        }
+        else if(ple == this.mother){
+            return "Hello "+politeSuffix+" Mother";
+        }
+        else{
+            return "Hello "+politeSuffix;
+        }
+     }
  }
