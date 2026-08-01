@@ -47,10 +47,10 @@ public class Children extends People implements GoodChild {
      public String respectTo(People ple){
         String politeSuffix = (gender=='M')? "Sir" : "Ma'am";
         if(ple == this.father){
-            return "Hello "+politeSuffix+" Father";
+            return "How are you "+politeSuffix+" Dad "+getFather();
         }
         else if(ple == this.mother){
-            return "Hello "+politeSuffix+" Mother";
+            return "How are you "+politeSuffix+" Mom "+getMother();
         }
         else{
             return "Hello "+politeSuffix;
