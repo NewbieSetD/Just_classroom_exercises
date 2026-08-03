@@ -2,6 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "Lab1App",
+      "request": "launch",
+      "mainClass": "Just_OOP.W4.Lab1App",
+      "projectName": "Just_classroom_exercises_c4261773"
+    },
+    {
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
       "request": "launch",
