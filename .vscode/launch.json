@@ -3,6 +3,20 @@
   "configurations": [
     {
       "type": "java",
+      "name": "GUI_OOP_ASS1",
+      "request": "launch",
+      "mainClass": "GUI_OOP_ASS1",
+      "projectName": "Just_classroom_exercises_c4261773"
+    },
+    {
+      "type": "java",
+      "name": "ReadIngTXT",
+      "request": "launch",
+      "mainClass": "Just_OOP.Projet.ReadIngTXT",
+      "projectName": "Just_classroom_exercises_c4261773"
+    },
+    {
+      "type": "java",
       "name": "Lab1App",
       "request": "launch",
       "mainClass": "Just_OOP.W4.Lab1App",
