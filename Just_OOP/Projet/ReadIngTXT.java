@@ -4,16 +4,15 @@ import java.io.File;
 public class ReadIngTXT {
     // UnDone
     ArrayList<Integer> DataMine = new ArrayList<>();
-    
-    public static void main(String[] args) {
-         File DataFlie = new File("pm2.5_69.txt");
-         ReadIngTXT read = new ReadIngTXT();
-         ReadFile(DataFlie,read.DataMine);
-        GetVarInt get = new GetVarInt(read.DataMine);
-        get.fetchOne();
-    }
-    public static void ReadFile(File DataFlie, ArrayList<Integer> DataMine){
+    // public static void main(String[] args){
+    //     ReadIngTXT read = new ReadIngTXT();
+    //     ReadFile(read.DataMine);
+    //     System.out.println(read.DataMine.size());
+
+    // }
+    public static void ReadFile(ArrayList<Integer> DataMine){
         String huhu="";
+        File DataFlie = new File("pm2.5_69.txt");
         try{
         Scanner Rening = new Scanner(DataFlie);
             while(Rening.hasNext()){
@@ -28,5 +27,12 @@ public class ReadIngTXT {
         catch (Exception e){
             System.out.println(e);
         }
+    }
+    public ArrayList<Integer>  getDataPM(){
+        return DataMine;
+    }
+    @Override
+    public String toString(){
+        return "DataFlie";
     }
 }
