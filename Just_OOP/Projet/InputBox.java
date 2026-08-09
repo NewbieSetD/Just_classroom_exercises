@@ -36,6 +36,24 @@ public class InputBox extends JPanel {
         //add(Box.createVerticalStrut(5)); 
         add(BtnInput);
     }
+    public InputBox(String titleName,String BtnName,boolean isEditable) {
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        // 1. ส่วนหัวข้อ
+        titleLabel = new JLabel(titleName);
+        titleLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        JButton BtnInput = new JButton(BtnName);
+        BtnInput.setPreferredSize(new Dimension(250, 35));
+        BtnInput.setMaximumSize(new Dimension(Short.MAX_VALUE, 35));
+        BtnInput.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        add(titleLabel);
+        add(Box.createVerticalStrut(5)); 
+        //add(Box.createVerticalStrut(5)); 
+        add(BtnInput);
+    }
 
     // =======================================================
     // เมธอดสำหรับรับค่าจากการคำนวณมาอัปเดตข้อความบนแถบ

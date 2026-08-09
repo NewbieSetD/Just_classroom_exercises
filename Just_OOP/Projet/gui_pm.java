@@ -42,6 +42,8 @@ public class gui_pm extends JFrame {
         InputBox Input_crete2 = new InputBox("Population sampling schedule.","Submit");
         DataUuser.add(Input_crete1);
         DataUuser.add(Input_crete2);
+        InputBox Input_crete3 = new InputBox("Get Rain","Submit",true);
+        DataUuser.add(Input_crete3);
         DataPanel.add(DataBar);
         DataPanel.add(DataUuser);
         add(DataPanel);
