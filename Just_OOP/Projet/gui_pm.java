@@ -8,13 +8,17 @@ public class gui_pm extends JFrame {
     private JPanel DataPanel;
     private JPanel DataBar;
     private JPanel DataUuser;
-    public int Wginter = 1000,Hginter = 1000;;
+    public int Wginter = 1024,Hginter = 1024;
     public gui_pm() {
         SetUp_gui();
         setLayout(new GridLayout(2, 1));
 
-        JPanel TopPanel = new JPanel(new FlowLayout());
-        setup_Tables(TopPanel);
+        JPanel TopPanel = new JPanel(new BorderLayout());
+        //JPanel TopPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        //TopPanel.setPreferredSize(new Dimension(1000, 800));
+        JScrollPane scrollPane = new JScrollPane(setup_Tables());
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        TopPanel.add(scrollPane, BorderLayout.CENTER);
         add(TopPanel);
         
         JPanel DataPanel = new JPanel(new GridLayout(1, 2));
@@ -44,7 +48,7 @@ public class gui_pm extends JFrame {
     }
 
     public static void main(String[] args) {
-        new gui_pm();
+        new gui_pm().setVisible(true);;
     }
     private void SetUp_gui(){
         setTitle("OOP_ASS1");
@@ -52,22 +56,28 @@ public class gui_pm extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
     }
    
-    private void setup_Tables(JPanel panel) {
-        JPanel topPanel = new JPanel(new BorderLayout());
+    private JTable setup_Tables() {
+        
+        int numRows = 1;
         JTable table = new JTable(40, 20){
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false; 
             }
         };
+        // for (int r = 0; r < table.getRowCount(); r++) {
+        //     for (int c = 0; c < table.getColumnCount(); c++) {
+        //         table.setValueAt(numRows++, r, c); // ใส่ค่าตัวเลขลงในพิกัด (r, c)
+        //     }
+        // }
         table.setRowHeight(40); 
         table.setShowGrid(true);
         table.setGridColor(Color.BLACK); 
-        table.setPreferredSize(new Dimension(Wginter, Hginter/2));
-        panel.add(table);
+        table.setIntercellSpacing(new Dimension(0, 0));
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        return table;  
     } 
     public void setUpdateData(jpaleBox box, String newValue) {
         box.setValue(newValue);
