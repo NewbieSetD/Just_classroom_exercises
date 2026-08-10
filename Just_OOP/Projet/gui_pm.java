@@ -3,12 +3,16 @@ import java.awt.*;
 import java.util.EventObject;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
 public class gui_pm extends JFrame {
     private JPanel TopPanel;
     private JPanel DataPanel;
     private JPanel DataBar;
     private JPanel DataUuser;
     public int Wginter = 1024,Hginter = 1024;
+    String[] Rain={"Artificial rain", "natural rain"};
+    String[] Data={"pm2.5_69.txt"};
     public gui_pm() {
         SetUp_gui();
         setLayout(new GridLayout(2, 1));
@@ -26,6 +30,7 @@ public class gui_pm extends JFrame {
         DataBar.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         JPanel DataUuser = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         DataUuser.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        
         jpaleBox Box_crete = new jpaleBox("Dust levels", "None Data Output");
         jpaleBox Box_crete2 = new jpaleBox("population", "None Data Output");
         jpaleBox Box_crete3 = new jpaleBox("number of healthy", "None Data Output");
@@ -38,11 +43,17 @@ public class gui_pm extends JFrame {
         DataBar.add(Box_crete5);
         
         //================================
+        JButton ImporBTN = new JButton("Import Data");
+        ImporBTN.setPreferredSize(new Dimension(250, 35));
+        ImporBTN.setMaximumSize(new Dimension(Short.MAX_VALUE, 35));
+        ImporBTN.setAlignmentX(Component.LEFT_ALIGNMENT);
+        DataUuser.add(ImporBTN);
         InputBox Input_crete1 = new InputBox("Determine the population.","Submit");
         InputBox Input_crete2 = new InputBox("Population sampling schedule.","Submit");
         DataUuser.add(Input_crete1);
         DataUuser.add(Input_crete2);
-        InputBox Input_crete3 = new InputBox("Get Rain","Submit",true);
+        InputBox Input_crete3 = new InputBox(Rain);
+        //openFile(); 
         DataUuser.add(Input_crete3);
         DataPanel.add(DataBar);
         DataPanel.add(DataUuser);
@@ -85,4 +96,26 @@ public class gui_pm extends JFrame {
         box.setValue(newValue);
 
     }
+    public void openFile() {
+    // 1. สร้าง JFileChooser
+    JFileChooser fileChooser = new JFileChooser();
+
+    // 2. (ตัวเลือก) กำหนดโฟลเดอร์เริ่มต้นที่ต้องการให้เปิด
+    fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+
+    // 3. กรองประเภทไฟล์ ให้เลือกได้เฉพาะ .csv และ .txt
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("Text & CSV Files (*.txt, *.csv)", "txt", "csv");
+    fileChooser.setFileFilter(filter);
+
+    // 4. เปิดหน้าต่าง Pop-up ให้ผู้ใช้เลือกไฟล์
+    int result = fileChooser.showOpenDialog(this); // 'this' คือ Component แม่ เช่น JFrame
+
+    // 5. ตรวจสอบว่าผู้ใช้กดปุ่ม "Open" หรือไม่
+    if (result == JFileChooser.APPROVE_OPTION) {
+        File selectedFile = fileChooser.getSelectedFile();
+        System.out.println("ไฟล์ที่เลือก: " + selectedFile.getAbsolutePath());
+
+        // 6. นำไฟล์ไปอ่านข้อมูล
+    }
+}
 }
