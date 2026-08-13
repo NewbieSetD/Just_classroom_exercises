@@ -62,6 +62,7 @@ public class InputBox extends JPanel {
         listBar = new JList<>(DataList);
         listBar.setFont(new Font("Tahoma", Font.BOLD, 14));
         listBar.setAlignmentX(Component.LEFT_ALIGNMENT);
+        listBar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane listScrollPane = new JScrollPane(listBar);
         listScrollPane.setPreferredSize(new Dimension(200, 300));
         
@@ -83,5 +84,11 @@ public class InputBox extends JPanel {
     }
     public JButton getSubmitButton() {
         return BtnInput;
+    }
+    public JTextField getTextField(){
+        return DataInput;
+    }
+    public JList getJList(){
+        return listBar;
     }
 }
