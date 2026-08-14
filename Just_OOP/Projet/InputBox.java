@@ -26,32 +26,13 @@ public class InputBox extends JPanel {
         DataInput.setBorder(BorderFactory.createCompoundBorder(border, 
                             BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         
-        JButton BtnInput = new JButton(BtnName);
+        BtnInput = new JButton(BtnName);
         BtnInput.setPreferredSize(new Dimension(250, 35));
         BtnInput.setMaximumSize(new Dimension(Short.MAX_VALUE, 35));
         BtnInput.setAlignmentX(Component.LEFT_ALIGNMENT);
-
         add(titleLabel);
         add(Box.createVerticalStrut(5)); 
         add(DataInput);
-        //add(Box.createVerticalStrut(5)); 
-        add(BtnInput);
-    }
-    public InputBox(String titleName) {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-        // 1. ส่วนหัวข้อ
-        titleLabel = new JLabel(titleName);
-        titleLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
-        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        JButton BtnInput = new JButton("Start");
-        BtnInput.setPreferredSize(new Dimension(250, 35));
-        BtnInput.setMaximumSize(new Dimension(Short.MAX_VALUE, 35));
-        BtnInput.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        add(titleLabel);
-        add(Box.createVerticalStrut(5)); 
         //add(Box.createVerticalStrut(5)); 
         add(BtnInput);
     }
@@ -61,15 +42,18 @@ public class InputBox extends JPanel {
         // 1. ส่วนหัวข้อ
         listBar = new JList<>(DataList);
         listBar.setFont(new Font("Tahoma", Font.BOLD, 14));
-        listBar.setAlignmentX(Component.LEFT_ALIGNMENT);
+        listBar.setAlignmentX(Component.CENTER_ALIGNMENT);
+        listBar.setFixedCellHeight(35);
+        
         listBar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane listScrollPane = new JScrollPane(listBar);
         listScrollPane.setPreferredSize(new Dimension(200, 300));
         
-        JButton BtnInput = new JButton("Start");
+        BtnInput = new JButton("Start Rain");
         BtnInput.setPreferredSize(new Dimension(250, 35));
         BtnInput.setMaximumSize(new Dimension(Short.MAX_VALUE, 35));
-        BtnInput.setAlignmentX(Component.LEFT_ALIGNMENT);
+        BtnInput.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
 
         add(listBar);
         add(Box.createVerticalStrut(5)); 
@@ -82,11 +66,22 @@ public class InputBox extends JPanel {
     public void getValue(JTextField DataInput) {
         DataInput.getText();
     }
+    public void setValue(){    }
     public JButton getSubmitButton() {
         return BtnInput;
     }
+    public void setButton_commd(String cmd){
+        BtnInput.setActionCommand(cmd);
+    }
+    public void setOutError(String data,Color cor){
+        DataInput.setForeground(cor);
+        DataInput.setText(data);
+    }
     public JTextField getTextField(){
         return DataInput;
+    }
+    public String getDataFromTextField(){
+        return DataInput.getText().trim();
     }
     public JList getJList(){
         return listBar;
