@@ -15,18 +15,19 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     private JPanel DataUuser;
     private File selectedFile;
     private JTable table;
-    private jpaleBox Box_crete;
-    private jpaleBox Box_crete2;
-    private jpaleBox Box_crete3;
-    private jpaleBox Box_crete4;
-    private jpaleBox Box_crete5;
+    private jpaleBox Box_crete;//Dust levels
+    private jpaleBox Box_crete2;//population
+    private jpaleBox Box_crete3;//number of healthy
+    private jpaleBox Box_crete4;//sick people
+    private jpaleBox Box_crete5;//percentage of sick people
     private ArrayList <Integer> NumData = new ArrayList<>();
     private String [] Rain = {"Artificial rain", "natural rain"};
     private int[][]DustLv;
     private int[][]population;
     private int[][]healthy;
     private int[][]Speople;
-    private float[][] percentage_Speople;
+    boolean isFlie = false,isGetPel = false;
+    private double[][] percentage_Speople;
     public int Wginter = 1024,Hginter = 1024;
     gui_pm() {
         SetUp_gui();
@@ -62,7 +63,14 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         ImporBTN.setAlignmentX(Component.LEFT_ALIGNMENT);
         ImporBTN.setActionCommand("IMPORT");
         ImporBTN.addActionListener(this);
+        JButton DataCal = new JButton("Refresh");
+        DataCal.setPreferredSize(new Dimension(250, 35));
+        DataCal.setMaximumSize(new Dimension(Short.MAX_VALUE, 10));
+        DataCal.setAlignmentX(Component.LEFT_ALIGNMENT);
+        DataCal.setActionCommand("REFRESH");
+        DataCal.addActionListener(this);
         DataUuser.add(ImporBTN);
+        DataUuser.add(DataCal);
         InputBox Input_crete1 = new InputBox("Determine the population.","Submit population");
         InputBox Input_crete2 = new InputBox("Population sampling schedule.","Submit Random");
         DataUuser.add(Input_crete1);
@@ -90,10 +98,12 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     }
     @Override
     public void actionPerformed(ActionEvent e) {
+        
         if(e.getActionCommand().equals("IMPORT")){
             System.out.println(" flie");
-            //  openFile(); 
-            //  outData_test();
+            openFile(); 
+            outData_test();
+            isFlie=true;
         }
         else if (e.getActionCommand().equals("POPULATION")){
             System.out.println(" Human");
@@ -102,6 +112,16 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             System.out.println(" random");
             setRandomHuman();
             setTable();
+            isGetPel=true; 
+        }
+        else if(e.getActionCommand().equals("REFRESH")){
+            System.out.println(" REFRESH");
+            if(isFlie&&isGetPel){
+                setDataHuman();
+            }
+            else{
+                System.out.println("None Data");
+            }
         }
         else if(e.getActionCommand().equals("RAIN")){
             System.out.println(" rain");
@@ -137,7 +157,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         population = new int[table.getRowCount()][table.getColumnCount()];
         healthy = new int[table.getRowCount()][table.getColumnCount()];
         Speople = new int[table.getRowCount()][table.getColumnCount()];
-        percentage_Speople = new float [table.getRowCount()][table.getColumnCount()];
+        percentage_Speople = new double [table.getRowCount()][table.getColumnCount()];
         table.addMouseListener(this);
         return table;  
     } 
@@ -192,7 +212,18 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
                 
                 if (row != -1 && col != -1) {
                     //onCellSelected(row, col); 
-                    sendDatatoBar_population(row,col,Box_crete2);
+                    sendDatatoBar(row,col,Box_crete,DustLv);
+                    sendDatatoBar(row,col,Box_crete2,population);
+                    sendDatatoBar(row,col,Box_crete3,healthy);
+                    sendDatatoBar(row,col,Box_crete4,Speople);
+                    sendDatatoBar(row,col,Box_crete5,percentage_Speople);
+                }
+                else {
+                    Box_crete.setValue("User Not Select");
+                    Box_crete2.setValue("User Not Select");
+                    Box_crete3.setValue("User Not Select");
+                    Box_crete4.setValue("User Not Select");
+                    Box_crete5.setValue("User Not Select");
                 }
             }
     private void onCellSelected(int row, int col) {
@@ -200,16 +231,21 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         System.out.println("User Select::" + cellNumber);
         System.out.println("Adrss::"+row+" "+col);
     }
-    private void sendDatatoBar_population(int row,int col,jpaleBox Box){
-        int numdata = population[row][col];
+    private void sendDatatoBar(int row,int col,jpaleBox Box,int [][]Data){
+        int numdata = Data[row][col];
         String data = Integer.toString(numdata);
         Box.setValue(data);
+    }
+    private void sendDatatoBar(int row,int col,jpaleBox Box,double [][]Data){
+        double numdata = Data[row][col];
+        String data = Double.toString(numdata);
+        Box.setValue(data+" %");
     }
     public void outData_test(){
         int ioi=0;
         for (int r = 0; r < table.getRowCount(); r++) {
             for (int c = 0; c < table.getColumnCount(); c++) {
-                table.setValueAt(NumData.get(ioi), r, c); 
+                //table.setValueAt(NumData.get(ioi), r, c); 
                 DustLv[r][c] = NumData.get(ioi);
                 ioi++;
             }
@@ -225,6 +261,51 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         
             }
         }
+    }
+    public void setDataHuman(){
+        for (int r = 0; r < healthy.length; r++) {
+            for (int c = 0; c < healthy[r].length ;c++) {
+                percentage_Speople[r][c] = population[r][c]*(getPercent(DustLv[r][c],population[r][c])/100);
+                Speople[r][c] = (int)percentage_Speople[r][c] * population[r][c];
+                healthy[r][c] = population[r][c] - Speople[r][c];
+            }
+        }
+    }
+    public double getPercent(int Dust,int plenum){
+        int MaxP=0,MinP=0;
+        double avgPercent=0,  minPatients ,maxPatients;
+        if(Dust>=0&&Dust<=50){
+            MaxP = 9;MinP=0;
+        }
+        else if(Dust>50&&Dust<=100){
+            MaxP = 19;MinP=10;
+        }
+        else if(Dust>100&&Dust<=150){
+            MaxP = 29;MinP=20;
+        }
+        else if(Dust>150){
+            MaxP = 50;MinP=30;
+        }
+         minPatients = plenum * (MinP / 100.0);
+         maxPatients = plenum * (MaxP / 100.0);
+        return avgPercent = (double)(maxPatients + minPatients) / 2;
+    }
+    public double getFullnum(int Dust,int[][]ple){
+        int MaxP=0,MinP=0;
+        double avgPercent=0;
+        if(Dust>=0&&Dust<=50){
+            MaxP = 9;MinP=0;
+        }
+        else if(Dust>50&&Dust<=100){
+            MaxP = 19;MinP=10;
+        }
+        else if(Dust>100&&Dust<=150){
+            MaxP = 29;MinP=20;
+        }
+        else if(Dust>150){
+            MaxP = 50;MinP=30;
+        }
+        return avgPercent = (double)(MaxP + MinP) / 2;
     }
     public void setTable(){
         for (int r = 0; r < table.getRowCount(); r++) {
