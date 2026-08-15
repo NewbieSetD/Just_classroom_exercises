@@ -21,7 +21,8 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     private int[][]population;
     private int[][]healthy;
     private int[][]Speople;
-      private double[][] percentage_Speople;
+    private double[][] percentage_Speople;
+    private Color[][] cellColors;
     boolean isFlie = false,isGetPel = false;
 
     public int Wginter = 1024,Hginter = 1024;
@@ -92,6 +93,14 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         // gui_pm fun = new gui_pm("My");
         // System.out.println(fun.isSamevalue(10));
     }
+    public void isCanbecolor(){
+        if(isFlie&isGetPel){
+                System.out.println("Is Done");
+                setDataBar();
+                setTable();
+                setColoerTable();
+            }
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         
@@ -100,10 +109,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             openFile(); 
             setDustData();
             isFlie=true;
-            if(isFlie&isGetPel){
-                System.out.println("Is Done");
-                setDataBar();
-            }
+            isCanbecolor();
         }
         else if (e.getActionCommand().equals("POPULATION")){
             System.out.println(" Human");
@@ -111,18 +117,18 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         else if(e.getActionCommand().equals("RANDOM")){
             System.out.println(" random");
             setRandomHuman();
-            setTable();
             isGetPel=true; 
-            if(isFlie&isGetPel){
-                System.out.println("Is Done");
-                setDataBar();
-            }
+            isCanbecolor();
+            
         }
         else if(e.getActionCommand().equals("REFRESH")){
             System.out.println(" REFRESH");
             if(isFlie&&isGetPel){
                 System.out.println("Is Refresh");
                 setDataBar();
+                setTable();
+                setColoerTable();
+                table.repaint();
             }
             else{
                 System.out.println("None Data");
@@ -151,6 +157,17 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             public boolean isCellEditable(int row, int column) {
                 return false; 
             }
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+
+                // ถ้าช่องนั้นไม่ได้ถูกคลิกเลือก และมีสีใน 2D Array ให้เปลี่ยนสีพื้นหลัง
+            if (!isRowSelected(row) && cellColors[row][column] != null) {
+                c.setBackground(cellColors[row][column]);
+            }
+        
+            return c;
+            }
         };
         
         table.setRowHeight(40); 
@@ -163,6 +180,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         healthy = new int[table.getRowCount()][table.getColumnCount()];
         Speople = new int[table.getRowCount()][table.getColumnCount()];
         percentage_Speople = new double [table.getRowCount()][table.getColumnCount()];
+        cellColors = new Color[table.getRowCount()][table.getColumnCount()];
         table.addMouseListener(this);
         return table;  
     } 
@@ -266,6 +284,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         System.out.println("Data count::"+NumData.size());
     }
     public void setRandomHuman(){
+        //min max;
         List<Integer> nums = IntStream.rangeClosed(1, 3000).boxed().collect(Collectors.toList());
         Collections.shuffle(nums);
         Random ranNum = new Random();
@@ -286,7 +305,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         }
     }
     public double getPercent(int Dust){
-        double avgPercent,  minPatients ,maxPatients,Drate,MaxP=0,MinP=0,Datamin=0,DataMax=0;
+        double   minPatients ,maxPatients,Drate,MaxP=0,MinP=0,Datamin=0,DataMax=0;
         if(Dust>=0&&Dust<=50){
             MaxP = 9;MinP=0;Datamin=0;DataMax=9;
         }
@@ -303,25 +322,23 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
          maxPatients = (MaxP / 100);
          Drate = (Dust-Datamin)/(DataMax-Datamin);
          //System.out.println(Drate);
-        return avgPercent = (minPatients + (Drate*(maxPatients-minPatients)))*100;
+        return (minPatients + (Drate*(maxPatients-minPatients)))*100;
     }
-    public double getFullnum(int Dust,int[][]ple){
-        int MaxP=0,MinP=0;
-        double avgPercent=0;
-        if(Dust>=0&&Dust<=50){
-            MaxP = 9;MinP=0;
+    public void setColoerTable(){
+        for (int r = 0; r < table.getRowCount(); r++) {
+            for (int c = 0; c < table.getColumnCount(); c++) {
+                if(percentage_Speople[r][c]<=9){cellColors[r][c] = Color.GREEN;}
+                else if(percentage_Speople[r][c]<=19){cellColors[r][c] = Color.YELLOW;}
+                else if(percentage_Speople[r][c]<=29){cellColors[r][c] = Color.ORANGE;}
+                else if(percentage_Speople[r][c]>29){cellColors[r][c] = Color.RED;}
+            }
         }
-        else if(Dust>50&&Dust<=100){
-            MaxP = 19;MinP=10;
-        }
-        else if(Dust>100&&Dust<=150){
-            MaxP = 29;MinP=20;
-        }
-        else if(Dust>150){
-            MaxP = 50;MinP=30;
-        }
-        return avgPercent = (double)(MaxP + MinP) / 2;
+        table.repaint();
     }
-
+    public void getnumInput(String Data,int[]arr){
+        String [] DInput = Data.split("(?<=\\D)|(?=\\D)");
+        arr[0] = Integer.parseInt(DInput[0]);
+        arr[1] = Integer.parseInt(DInput[2]);
+    }
     
 }
