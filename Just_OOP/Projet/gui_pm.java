@@ -1,33 +1,29 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.EventObject;
-import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 import java.awt.event.*;
 public class gui_pm extends JFrame implements ActionListener,MouseListener{
-    private JPanel TopPanel;
-    private JPanel DataPanel;
-    private JPanel DataBar;
-    private JPanel DataUuser;
+    private JPanel TopPanel,DataPanel,DataBar,DataUuser;
     private File selectedFile;
     private JTable table;
-    private jpaleBox Box_crete;//Dust levels
-    private jpaleBox Box_crete2;//population
-    private jpaleBox Box_crete3;//number of healthy
-    private jpaleBox Box_crete4;//sick people
-    private jpaleBox Box_crete5;//percentage of sick people
+        //Dust levels || population(2) || number of healthy(3) || sick people(4) || percentage of sick people(5)
+    private jpaleBox Box_crete,Box_crete2,Box_crete3,Box_crete4,Box_crete5;
     private ArrayList <Integer> NumData = new ArrayList<>();
     private String [] Rain = {"Artificial rain", "natural rain"};
     private int[][]DustLv;
     private int[][]population;
     private int[][]healthy;
     private int[][]Speople;
+      private double[][] percentage_Speople;
     boolean isFlie = false,isGetPel = false;
-    private double[][] percentage_Speople;
+
     public int Wginter = 1024,Hginter = 1024;
     gui_pm() {
         SetUp_gui();
@@ -102,8 +98,12 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         if(e.getActionCommand().equals("IMPORT")){
             System.out.println(" flie");
             openFile(); 
-            outData_test();
+            setDustData();
             isFlie=true;
+            if(isFlie&isGetPel){
+                System.out.println("Is Done");
+                setDataBar();
+            }
         }
         else if (e.getActionCommand().equals("POPULATION")){
             System.out.println(" Human");
@@ -113,11 +113,16 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             setRandomHuman();
             setTable();
             isGetPel=true; 
+            if(isFlie&isGetPel){
+                System.out.println("Is Done");
+                setDataBar();
+            }
         }
         else if(e.getActionCommand().equals("REFRESH")){
             System.out.println(" REFRESH");
             if(isFlie&&isGetPel){
-                setDataHuman();
+                System.out.println("Is Refresh");
+                setDataBar();
             }
             else{
                 System.out.println("None Data");
@@ -161,6 +166,13 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         table.addMouseListener(this);
         return table;  
     } 
+    public void setTable(){
+        for (int r = 0; r < table.getRowCount(); r++) {
+            for (int c = 0; c < table.getColumnCount(); c++) {
+                table.setValueAt(population[r][c], r, c); 
+            }
+        }
+    }
     public String getData(InputBox Input){
         return Input.getDataFromTextField();
     }
@@ -236,12 +248,13 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         String data = Integer.toString(numdata);
         Box.setValue(data);
     }
+    //Double
     private void sendDatatoBar(int row,int col,jpaleBox Box,double [][]Data){
-        double numdata = Data[row][col];
-        String data = Double.toString(numdata);
+        double numdata = Data[row][col];;
+        String data = String.format("%.2f", numdata);
         Box.setValue(data+" %");
     }
-    public void outData_test(){
+    public void setDustData(){
         int ioi=0;
         for (int r = 0; r < table.getRowCount(); r++) {
             for (int c = 0; c < table.getColumnCount(); c++) {
@@ -253,42 +266,44 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         System.out.println("Data count::"+NumData.size());
     }
     public void setRandomHuman(){
+        List<Integer> nums = IntStream.rangeClosed(1, 3000).boxed().collect(Collectors.toList());
+        Collections.shuffle(nums);
+        Random ranNum = new Random();
+        int index=0;
         for (int r = 0; r < population.length; r++) {
             for (int c = 0; c < population[r].length ;c++) {
-                do{
-                    population[r][c] = (int)(Math.random()*3000+1);
-                }while(isSamevalue(population[r][c]));
-        
+                population[r][c] = nums.get(index);index++;
             }
         }
     }
-    public void setDataHuman(){
+    public void setDataBar(){
         for (int r = 0; r < healthy.length; r++) {
             for (int c = 0; c < healthy[r].length ;c++) {
-                percentage_Speople[r][c] = population[r][c]*(getPercent(DustLv[r][c],population[r][c])/100);
-                Speople[r][c] = (int)percentage_Speople[r][c] * population[r][c];
+                percentage_Speople[r][c] = getPercent(DustLv[r][c]);
+                Speople[r][c] = (int)(population[r][c]* percentage_Speople[r][c])/100;
                 healthy[r][c] = population[r][c] - Speople[r][c];
             }
         }
     }
-    public double getPercent(int Dust,int plenum){
-        int MaxP=0,MinP=0;
-        double avgPercent=0,  minPatients ,maxPatients;
+    public double getPercent(int Dust){
+        double avgPercent,  minPatients ,maxPatients,Drate,MaxP=0,MinP=0,Datamin=0,DataMax=0;
         if(Dust>=0&&Dust<=50){
-            MaxP = 9;MinP=0;
+            MaxP = 9;MinP=0;Datamin=0;DataMax=9;
         }
         else if(Dust>50&&Dust<=100){
-            MaxP = 19;MinP=10;
+            MaxP = 19;MinP=10;Datamin=51;DataMax=100;
         }
         else if(Dust>100&&Dust<=150){
-            MaxP = 29;MinP=20;
+            MaxP = 29;MinP=20;Datamin=101;DataMax=150;
         }
         else if(Dust>150){
-            MaxP = 50;MinP=30;
+            MaxP = 50;MinP=30;Datamin=151;DataMax=250;
         }
-         minPatients = plenum * (MinP / 100.0);
-         maxPatients = plenum * (MaxP / 100.0);
-        return avgPercent = (double)(maxPatients + minPatients) / 2;
+         minPatients = (MinP / 100);
+         maxPatients = (MaxP / 100);
+         Drate = (Dust-Datamin)/(DataMax-Datamin);
+         //System.out.println(Drate);
+        return avgPercent = (minPatients + (Drate*(maxPatients-minPatients)))*100;
     }
     public double getFullnum(int Dust,int[][]ple){
         int MaxP=0,MinP=0;
@@ -307,24 +322,6 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         }
         return avgPercent = (double)(MaxP + MinP) / 2;
     }
-    public void setTable(){
-        for (int r = 0; r < table.getRowCount(); r++) {
-            for (int c = 0; c < table.getColumnCount(); c++) {
-                table.setValueAt(population[r][c], r, c); 
 
-            }
-        }
-    }
-    public boolean isSamevalue(int xx){
-        boolean isReal = true;
-        for(int ir=0;ir<population.length;ir++){
-            for(int ic=0;ic<population[ir].length;ic++){
-                if(population[ir][ic] == xx){
-                    isReal= false;
-                    break;
-                }
-            }
-        }return isReal;
-    }
     
 }
