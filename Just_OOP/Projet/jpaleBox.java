@@ -5,7 +5,7 @@ import java.awt.*;
 // Class สำหรับสร้างบล็อกข้อมูลที่รองรับการอัปเดตค่า
 class jpaleBox extends JPanel {
     private JLabel titleLabel;
-    private JLabel dataLabel;
+    private JTextArea dataArea;
 
     public jpaleBox(String titleName, String initialValue) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -16,28 +16,29 @@ class jpaleBox extends JPanel {
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // 2. แถบแสดงข้อมูล
-        dataLabel = new JLabel(initialValue);
-        dataLabel.setPreferredSize(new Dimension(250, 35));
-        dataLabel.setMaximumSize(new Dimension(Short.MAX_VALUE, 35));
-        dataLabel.setOpaque(true);
-        dataLabel.setBackground(new Color(240, 240, 240));
-        dataLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        dataArea = new JTextArea();
+        dataArea.setPreferredSize(new Dimension(250, 35));
+        dataArea.setMaximumSize(new Dimension(Short.MAX_VALUE, 35));
+        dataArea.setOpaque(true);
+        dataArea.setBackground(new Color(240, 240, 240));
+        dataArea.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         Border border = BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1);
-        dataLabel.setBorder(BorderFactory.createCompoundBorder(border, 
+        dataArea.setBorder(BorderFactory.createCompoundBorder(border, 
                             BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         add(titleLabel);
         add(Box.createVerticalStrut(5)); 
-        add(dataLabel);
+        add(dataArea);
     }
     // =======================================================
     // เมธอดสำหรับรับค่าจากการคำนวณมาอัปเดตข้อความบนแถบ
     public void setValue(String newValue) {
-        dataLabel.setText(newValue);
+        dataArea.setText(newValue);
     }
-    public JLabel getLabel(){
-        return dataLabel;
+    public void setDataOutput(String d){
+        dataArea.setText("");
+        dataArea.append(d);
     }
 
 }

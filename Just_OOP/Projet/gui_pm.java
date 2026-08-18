@@ -42,7 +42,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         JPanel DataUuser = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         DataUuser.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         
-         Box_crete = new jpaleBox("Dust levels", "None Data Output");
+         Box_crete =  new jpaleBox("Dust levels", "None Data Output");
          Box_crete2 = new jpaleBox("population", "None Data Output");
          Box_crete3 = new jpaleBox("number of healthy", "None Data Output");
          Box_crete4 = new jpaleBox("sick people", "None Data Output");
@@ -69,7 +69,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         DataUuser.add(ImporBTN);
         DataUuser.add(DataCal);
         InputBox Input_crete1 = new InputBox("Determine the population.","Submit population");
-        InputBox Input_crete2 = new InputBox("Population sampling schedule.","Submit Random");
+        InputBox Input_crete2 = new InputBox("Population sampling schedule(Number-Number).","Submit Random");
         DataUuser.add(Input_crete1);
         DataUuser.add(Input_crete2);
         InputBox Input_crete3 = new InputBox(Rain);
@@ -166,7 +166,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
                 c.setBackground(cellColors[row][column]);
             }
         
-            return c;
+                return c;
             }
         };
         
@@ -262,15 +262,14 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         System.out.println("Adrss::"+row+" "+col);
     }
     private void sendDatatoBar(int row,int col,jpaleBox Box,int [][]Data){
-        int numdata = Data[row][col];
-        String data = Integer.toString(numdata);
-        Box.setValue(data);
+        String data = String.format("%d",  Data[row][col]);
+        Box.setDataOutput(data);
     }
     //Double
     private void sendDatatoBar(int row,int col,jpaleBox Box,double [][]Data){
-        double numdata = Data[row][col];;
-        String data = String.format("%.2f", numdata);
-        Box.setValue(data+" %");
+        
+        String data = String.format("%.2f %%",  Data[row][col]);
+        Box.setDataOutput(data);
     }
     public void setDustData(){
         int ioi=0;
