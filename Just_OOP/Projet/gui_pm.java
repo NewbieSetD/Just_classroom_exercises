@@ -14,7 +14,8 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     private File selectedFile;
     private JTable table;
         //Dust levels || population(2) || number of healthy(3) || sick people(4) || percentage of sick people(5)
-    private jpaleBox Box_crete,Box_crete2,Box_crete3,Box_crete4,Box_crete5;
+    private jpaleBox Box_crete,Box_crete2,Box_crete3,Box_crete4,Box_crete5,Box_AdrTable;
+    private InputBox Input_crete1,Input_crete2,Input_crete3;
     private ArrayList <Integer> NumData = new ArrayList<>();
     private String [] Rain = {"Artificial rain", "natural rain"};
     private int[][]DustLv;
@@ -23,8 +24,9 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     private int[][]Speople;
     private double[][] percentage_Speople;
     private Color[][] cellColors;
-    boolean isFlie = false,isGetPel = false;
-
+    private boolean isFlie = false,isGetPel = false;
+    private int arr[] = new int[2]; 
+    private String stateInput;
     public int Wginter = 1024,Hginter = 1024;
     gui_pm() {
         SetUp_gui();
@@ -35,18 +37,18 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         TopPanel.add(scrollPane, BorderLayout.CENTER);
         add(TopPanel);
-        
         JPanel DataPanel = new JPanel(new GridLayout(1, 2));
         JPanel DataBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         DataBar.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         JPanel DataUuser = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         DataUuser.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        
+        Box_AdrTable = new jpaleBox("Table On", "None Select");
          Box_crete =  new jpaleBox("Dust levels", "None Data Output");
          Box_crete2 = new jpaleBox("population", "None Data Output");
          Box_crete3 = new jpaleBox("number of healthy", "None Data Output");
          Box_crete4 = new jpaleBox("sick people", "None Data Output");
          Box_crete5 = new jpaleBox("percentage of sick people", "None Data Output");
+        DataBar.add(Box_AdrTable); 
         DataBar.add(Box_crete);
         DataBar.add(Box_crete2);
         DataBar.add(Box_crete3);
@@ -68,11 +70,11 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         DataCal.addActionListener(this);
         DataUuser.add(ImporBTN);
         DataUuser.add(DataCal);
-        InputBox Input_crete1 = new InputBox("Determine the population.","Submit population");
-        InputBox Input_crete2 = new InputBox("Population sampling schedule(Number-Number).","Submit Random");
+        Input_crete1 = new InputBox("Determine the population.","Submit population");
+        Input_crete2 = new InputBox("Population sampling schedule(Number-Number).","Submit Random");
         DataUuser.add(Input_crete1);
         DataUuser.add(Input_crete2);
-        InputBox Input_crete3 = new InputBox(Rain);
+        Input_crete3 = new InputBox(Rain);
         Input_crete1.setButton_commd("POPULATION");
         Input_crete2.setButton_commd("RANDOM");
         Input_crete3.setButton_commd("RAIN");
@@ -85,9 +87,6 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         add(DataPanel);
         
     }
-    gui_pm(String fgf){
-        System.out.println(fgf);
-    }
     public static void main(String[] args) {
             new gui_pm().setVisible(true);
         // gui_pm fun = new gui_pm("My");
@@ -97,7 +96,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         if(isFlie&isGetPel){
                 System.out.println("Is Done");
                 setDataBar();
-                setTable();
+                //setTable();
                 setColoerTable();
             }
     }
@@ -105,28 +104,34 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     public void actionPerformed(ActionEvent e) {
         
         if(e.getActionCommand().equals("IMPORT")){
-            System.out.println(" flie");
             openFile(); 
             setDustData();
             isFlie=true;
             isCanbecolor();
+            System.out.println(" flie");
         }
         else if (e.getActionCommand().equals("POPULATION")){
             System.out.println(" Human");
         }
         else if(e.getActionCommand().equals("RANDOM")){
             System.out.println(" random");
-            setRandomHuman();
-            isGetPel=true; 
-            isCanbecolor();
-            
+            String Det = Input_crete2.getDataFromTextField();
+            setnumInput(Det);
+            Arrays.sort(arr);
+            if(isRigthRandom()){
+                isGetPel=true; 
+                isCanbecolor();
+                Input_crete2.showTemporaryText(stateInput);
+                setRandomHuman(arr[0],arr[1]);
+            }
+            else{Input_crete2.showTemporaryText(stateInput);}
         }
         else if(e.getActionCommand().equals("REFRESH")){
             System.out.println(" REFRESH");
             if(isFlie&&isGetPel){
                 System.out.println("Is Refresh");
                 setDataBar();
-                setTable();
+                //setTable();
                 setColoerTable();
                 table.repaint();
             }
@@ -138,7 +143,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             System.out.println(" rain");
         }
         else{
-            System.out.println("WHO ARE YOU?");
+            System.out.println("None Button");
         }
     }
     private void SetUp_gui(){
@@ -150,7 +155,6 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     }
    
     private JTable setup_Tables() {
-        
         int numRows = 1;
         table = new JTable(40, 20){
             @Override
@@ -162,7 +166,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
                 Component c = super.prepareRenderer(renderer, row, column);
 
                 // ถ้าช่องนั้นไม่ได้ถูกคลิกเลือก และมีสีใน 2D Array ให้เปลี่ยนสีพื้นหลัง
-            if (!isRowSelected(row) && cellColors[row][column] != null) {
+            if (cellColors[row][column] != null) {
                 c.setBackground(cellColors[row][column]);
             }
         
@@ -182,12 +186,18 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         percentage_Speople = new double [table.getRowCount()][table.getColumnCount()];
         cellColors = new Color[table.getRowCount()][table.getColumnCount()];
         table.addMouseListener(this);
+        table.setRowSelectionAllowed(false);
+        table.setColumnSelectionAllowed(false);
+        table.setCellSelectionEnabled(true);
+        //table.setFocusable(false);
         return table;  
     } 
     public void setTable(){
+        int Adr=0;
         for (int r = 0; r < table.getRowCount(); r++) {
             for (int c = 0; c < table.getColumnCount(); c++) {
-                table.setValueAt(population[r][c], r, c); 
+                table.setValueAt(Adr, r, c); 
+                Adr++;
             }
         }
     }
@@ -241,50 +251,73 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
                 int col = table.getSelectedColumn();
                 
                 if (row != -1 && col != -1) {
-                    //onCellSelected(row, col); 
+                    onCellSelected(row,col,Box_AdrTable);
                     sendDatatoBar(row,col,Box_crete,DustLv);
                     sendDatatoBar(row,col,Box_crete2,population);
                     sendDatatoBar(row,col,Box_crete3,healthy);
                     sendDatatoBar(row,col,Box_crete4,Speople);
                     sendDatatoBar(row,col,Box_crete5,percentage_Speople);
                 }
-                else {
-                    Box_crete.setValue("User Not Select");
-                    Box_crete2.setValue("User Not Select");
-                    Box_crete3.setValue("User Not Select");
-                    Box_crete4.setValue("User Not Select");
-                    Box_crete5.setValue("User Not Select");
-                }
-            }
-    private void onCellSelected(int row, int col) {
+    }
+    private void onCellSelected(int row, int col,jpaleBox Box) {
         int cellNumber = (row * 20) + col + 1;
-        System.out.println("User Select::" + cellNumber);
-        System.out.println("Adrss::"+row+" "+col);
+        //System.out.println("User Select::" + cellNumber);
+        // System.out.println("Adrss::"+row+" "+col);
+        Box.setValue(Integer.toString(cellNumber));
+
     }
     private void sendDatatoBar(int row,int col,jpaleBox Box,int [][]Data){
         String data = String.format("%d",  Data[row][col]);
-        Box.setDataOutput(data);
+        Box.setValue(data);
     }
     //Double
     private void sendDatatoBar(int row,int col,jpaleBox Box,double [][]Data){
         
         String data = String.format("%.2f %%",  Data[row][col]);
-        Box.setDataOutput(data);
+        Box.setValue(data);
+    }
+    public boolean isRigthRandom(){
+        if((arr[1]-arr[0])<800){
+            stateInput = "The sampling range is less than 800.";
+            return false;
+        }
+        else if(arr[0]<=0){
+            stateInput = "Numbers starting with 0 are not allowed.";
+            return false;
+        }
+        else{
+            stateInput = "Data transmission is accessible.";
+            return true;
+        }
+    }
+    public void setnumInput(String Data){
+        String [] DInput = Data.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
+        int oio=0;
+        try{
+          for(short i=0;i<DInput.length;i++){
+               if(DInput[i].matches("\\d+")){
+                    arr[oio] = Integer.parseInt(DInput[i]);
+                    oio++;
+               }
+          }
+        }
+        catch(Exception e){
+          System.out.println(e.getMessage());
+        }
     }
     public void setDustData(){
         int ioi=0;
         for (int r = 0; r < table.getRowCount(); r++) {
             for (int c = 0; c < table.getColumnCount(); c++) {
-                //table.setValueAt(NumData.get(ioi), r, c); 
+                table.setValueAt(ioi+1, r, c); 
                 DustLv[r][c] = NumData.get(ioi);
                 ioi++;
             }
         }
         System.out.println("Data count::"+NumData.size());
     }
-    public void setRandomHuman(){
-        //min max;
-        List<Integer> nums = IntStream.rangeClosed(1, 3000).boxed().collect(Collectors.toList());
+    public void setRandomHuman(int min,int max){
+        List<Integer> nums = IntStream.rangeClosed(min, max).boxed().collect(Collectors.toList());
         Collections.shuffle(nums);
         Random ranNum = new Random();
         int index=0;
@@ -334,10 +367,6 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         }
         table.repaint();
     }
-    public void getnumInput(String Data,int[]arr){
-        String [] DInput = Data.split("(?<=\\D)|(?=\\D)");
-        arr[0] = Integer.parseInt(DInput[0]);
-        arr[1] = Integer.parseInt(DInput[2]);
-    }
+    
     
 }

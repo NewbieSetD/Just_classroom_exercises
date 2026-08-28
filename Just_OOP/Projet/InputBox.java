@@ -8,6 +8,7 @@ public class InputBox extends JPanel {
     private JTextField DataInput; // เก็บ Reference ไว้เปลี่ยนค่า
     private JButton BtnInput; // เก็บ Reference ไว้เปลี่ยนค่า
     private JList<String> listBar;
+    private Timer currentTimer ;
     public InputBox(String titleName,String BtnName) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -63,9 +64,21 @@ public class InputBox extends JPanel {
 
     // =======================================================
     // เมธอดสำหรับรับค่าจากการคำนวณมาอัปเดตข้อความบนแถบ
-    public void getValue(JTextField DataInput) {
-        DataInput.getText();
+    public void showTemporaryText(String message) {
+        if (currentTimer != null && currentTimer.isRunning()) {
+        currentTimer.stop();
     }
+        DataInput.setText(message);
+
+        // สร้าง Timer นับถอยหลังตามเวลา delayMs
+        Timer timer = new Timer(2500, e -> {
+            DataInput.setText(""); // เมื่อครบกำหนดเวลา ให้ลบข้อความทิ้ง
+        });
+
+        timer.setRepeats(false); // 🟢 สำคัญ: ตั้งค่าให้ทำงานครั้งเดียวแล้วหยุด
+        timer.start(); // เริ่มนับเวลา
+    }
+
     public void setValue(){    }
     public JButton getSubmitButton() {
         return BtnInput;

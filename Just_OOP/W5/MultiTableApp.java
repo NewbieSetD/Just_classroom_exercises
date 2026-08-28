@@ -26,7 +26,6 @@ public class MultiTableApp extends JFrame implements ActionListener{
     }
     public  void actionPerformed(ActionEvent ex){
         int Num=0;
-        String DataN="",DataC="",DataI="";
        if(ex.getActionCommand().equals("MuI")){
             String data = tf.getText();
             //System.out.print("kkk");

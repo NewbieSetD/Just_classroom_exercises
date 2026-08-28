@@ -5,7 +5,7 @@ import java.awt.*;
 // Class สำหรับสร้างบล็อกข้อมูลที่รองรับการอัปเดตค่า
 class jpaleBox extends JPanel {
     private JLabel titleLabel;
-    private JTextArea dataArea;
+    private JLabel dataArea;
 
     public jpaleBox(String titleName, String initialValue) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -16,7 +16,7 @@ class jpaleBox extends JPanel {
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // 2. แถบแสดงข้อมูล
-        dataArea = new JTextArea();
+        dataArea = new JLabel(initialValue);
         dataArea.setPreferredSize(new Dimension(250, 35));
         dataArea.setMaximumSize(new Dimension(Short.MAX_VALUE, 35));
         dataArea.setOpaque(true);
@@ -38,7 +38,7 @@ class jpaleBox extends JPanel {
     }
     public void setDataOutput(String d){
         dataArea.setText("");
-        dataArea.append(d);
+        dataArea.setText(d);
     }
 
 }
