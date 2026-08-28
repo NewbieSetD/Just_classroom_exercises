@@ -102,7 +102,6 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        
         if(e.getActionCommand().equals("IMPORT")){
             openFile(); 
             setDustData();
@@ -111,7 +110,30 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             System.out.println(" flie");
         }
         else if (e.getActionCommand().equals("POPULATION")){
-            System.out.println(" Human");
+            String Det = Input_crete1.getDataFromTextField();
+            int r = table.getSelectedRow();
+            int c = table.getSelectedColumn();
+            int cellNumber = (r * 20) + c + 1;
+            int numData;
+                System.out.println("Adrss::"+r+" "+c);
+                System.out.println("On cell::"+cellNumber); 
+            if(!((r != -1) && (c != -1))){
+                stateInput = "The user did not select a grid box.";
+                Input_crete1.showTemporaryText(stateInput);
+            }       
+            else if(isNumic(Det)){
+                numData=getDataIntSclect(Det);
+                setpopulation(r,c,numData);
+                Input_crete1.showTemporaryText(stateInput);
+                System.out.println(" Human");
+                sendDatatoBar(r,c,Box_crete2,population);
+            }
+            else{
+                stateInput = "Please use only integers.";
+                Input_crete1.showTemporaryText(stateInput);
+                System.out.println("Not Human");
+            }
+            
         }
         else if(e.getActionCommand().equals("RANDOM")){
             System.out.println(" random");
@@ -277,12 +299,13 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         Box.setValue(data);
     }
     public boolean isRigthRandom(){
-        if((arr[1]-arr[0])<800){
-            stateInput = "The sampling range is less than 800.";
+        if(arr[0]<=0||arr[1]<=0){
+            stateInput = "Numbers starting with 0 are not allowed.";
             return false;
         }
-        else if(arr[0]<=0){
-            stateInput = "Numbers starting with 0 are not allowed.";
+        else if((arr[1]-arr[0])<800){
+            
+            stateInput = "The sampling range is less than 800.";
             return false;
         }
         else{
@@ -367,6 +390,32 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         }
         table.repaint();
     }
-    
-    
+    public int getDataIntSclect(String Data){
+        int num=0;
+        try {
+            num = Integer.parseInt(Data);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            stateInput = e.getMessage();
+        }
+        return num;
+    }
+    public boolean isNumic(String Data){
+        int num=0;
+        try {
+            num = Integer.parseInt(Data);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+        
+    }
+    private void setpopulation(int row,int col,int data){
+        if(data<=0){
+            stateInput = "Equal to or less than 0 is not allowed.";
+            return;
+        }
+        population[row][col] = data;
+        stateInput = "Data entry completed.";
+    }
 }
