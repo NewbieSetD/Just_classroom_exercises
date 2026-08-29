@@ -46,7 +46,7 @@ public class InputBox extends JPanel {
         listBar.setAlignmentX(Component.CENTER_ALIGNMENT);
         listBar.setFixedCellHeight(35);
         listBar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listBar.setSelectedIndex(0);
+        //listBar.setSelectedIndex(0);
         JScrollPane listScrollPane = new JScrollPane(listBar);
         listScrollPane.setPreferredSize(new Dimension(200, 300));
         

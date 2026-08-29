@@ -101,10 +101,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             }
     }
     public boolean isWork(){
-        if(isFlie&isGetPel){
-            return true;
-        }
-            return false;
+        return isFlie&isGetPel;
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -148,18 +145,24 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             Arrays.sort(arr);
             if(isRigthRandom()){
                 isGetPel=true; 
+                setRandomHuman(arr[0],arr[1]);
                 isCanbecolor();
                 Input_crete2.showTemporaryText(stateInput);
-                setRandomHuman(arr[0],arr[1]);
+                
             }
             else{Input_crete2.showTemporaryText(stateInput);}
         }
         else if(e.getActionCommand().equals("REFRESH")){
             System.out.println(" REFRESH");
-            if(isWork()){
+            if(isWork()&&Input_crete3.getJList().getSelectedIndex()<0){
                 System.out.println("Is Refresh");
                 setDataBar();
                 //setTable();
+                setColoerTable();
+                table.repaint();
+            }
+            else if(isWork()&&Input_crete3.getJList().getSelectedIndex()>=0){
+                System.out.println("Refresh for Rain");
                 setColoerTable();
                 table.repaint();
             }
@@ -180,13 +183,14 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
                 }
                 else{System.out.println("None Data");}
             }
-            else{
+            else if(Input_crete3.getJList().getSelectedIndex()==1){
                 System.out.println("natural rain");
                 if(isWork()){
                     Natural_rain();
                 }
                 else{System.out.println("None Data");}
             }
+            else{System.out.println("User Not Select Any Rain");}
         }
         else{
             System.out.println("None Button");
