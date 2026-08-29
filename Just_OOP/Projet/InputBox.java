@@ -45,8 +45,8 @@ public class InputBox extends JPanel {
         listBar.setFont(new Font("Tahoma", Font.BOLD, 14));
         listBar.setAlignmentX(Component.CENTER_ALIGNMENT);
         listBar.setFixedCellHeight(35);
-        
         listBar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listBar.setSelectedIndex(0);
         JScrollPane listScrollPane = new JScrollPane(listBar);
         listScrollPane.setPreferredSize(new Dimension(200, 300));
         
@@ -78,8 +78,6 @@ public class InputBox extends JPanel {
         timer.setRepeats(false); // 🟢 สำคัญ: ตั้งค่าให้ทำงานครั้งเดียวแล้วหยุด
         timer.start(); // เริ่มนับเวลา
     }
-
-    public void setValue(){    }
     public JButton getSubmitButton() {
         return BtnInput;
     }

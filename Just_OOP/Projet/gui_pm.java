@@ -93,12 +93,18 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         // System.out.println(fun.isSamevalue(10));
     }
     public void isCanbecolor(){
-        if(isFlie&isGetPel){
+        if(isWork()){
                 System.out.println("Is Done");
                 setDataBar();
                 //setTable();
                 setColoerTable();
             }
+    }
+    public boolean isWork(){
+        if(isFlie&isGetPel){
+            return true;
+        }
+            return false;
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -111,12 +117,12 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         }
         else if (e.getActionCommand().equals("POPULATION")){
             String Det = Input_crete1.getDataFromTextField();
+             int numData;
             int r = table.getSelectedRow();
             int c = table.getSelectedColumn();
             int cellNumber = (r * 20) + c + 1;
-            int numData;
-                System.out.println("Adrss::"+r+" "+c);
-                System.out.println("On cell::"+cellNumber); 
+            String Output = String.format("User On cell %d or on Row:: %d and Col:: %d",cellNumber,r,c);
+            System.out.println(Output);
             if(!((r != -1) && (c != -1))){
                 stateInput = "The user did not select a grid box.";
                 Input_crete1.showTemporaryText(stateInput);
@@ -150,7 +156,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         }
         else if(e.getActionCommand().equals("REFRESH")){
             System.out.println(" REFRESH");
-            if(isFlie&&isGetPel){
+            if(isWork()){
                 System.out.println("Is Refresh");
                 setDataBar();
                 //setTable();
@@ -162,7 +168,25 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             }
         }
         else if(e.getActionCommand().equals("RAIN")){
-            System.out.println(" rain");
+            int r = table.getSelectedRow();
+            int c = table.getSelectedColumn();
+            int cellNumber = (r * 20) + c + 1;
+            String Output = String.format("User On cell %d or on Row:: %d and Col:: %d",cellNumber,r,c);
+            System.out.println(Output); 
+            if(Input_crete3.getJList().getSelectedIndex()==0){
+                System.out.println("Artificial rain");
+                if(isWork()){
+
+                }
+                else{System.out.println("None Data");}
+            }
+            else{
+                System.out.println("natural rain");
+                if(isWork()){
+                    Natural_rain();
+                }
+                else{System.out.println("None Data");}
+            }
         }
         else{
             System.out.println("None Button");
@@ -283,8 +307,6 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     }
     private void onCellSelected(int row, int col,jpaleBox Box) {
         int cellNumber = (row * 20) + col + 1;
-        //System.out.println("User Select::" + cellNumber);
-        // System.out.println("Adrss::"+row+" "+col);
         Box.setValue(Integer.toString(cellNumber));
 
     }
@@ -418,4 +440,27 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         population[row][col] = data;
         stateInput = "Data entry completed.";
     }
+    private void Natural_rain(){
+        int Num=0;
+        for(int r=0;r<DustLv.length;r++){
+            for(int c=0;c<DustLv[r].length;c++){
+                Num=DustLv[r][c];
+                if(isZero(Num,50)){
+                    DustLv[r][c]=DustLv[r][c]-50;
+                }
+                else{
+                    DustLv[r][c]=0;
+                }
+            }
+        }
+    }
+    public boolean isZero(int x,int y){
+        if((x-y)>0){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 }
+
