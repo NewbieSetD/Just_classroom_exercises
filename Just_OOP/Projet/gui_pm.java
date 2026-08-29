@@ -62,12 +62,16 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         ImporBTN.setAlignmentX(Component.LEFT_ALIGNMENT);
         ImporBTN.setActionCommand("IMPORT");
         ImporBTN.addActionListener(this);
+
+        //================================
         JButton DataCal = new JButton("Refresh");
         DataCal.setPreferredSize(new Dimension(250, 35));
         DataCal.setMaximumSize(new Dimension(Short.MAX_VALUE, 10));
         DataCal.setAlignmentX(Component.LEFT_ALIGNMENT);
         DataCal.setActionCommand("REFRESH");
         DataCal.addActionListener(this);
+
+        //================================
         DataUuser.add(ImporBTN);
         DataUuser.add(DataCal);
         Input_crete1 = new InputBox("Determine the population.","Submit population");
@@ -84,6 +88,8 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         DataUuser.add(Input_crete3);
         DataPanel.add(DataBar);
         DataPanel.add(DataUuser);
+
+        //================================
         add(DataPanel);
         
     }
@@ -154,17 +160,9 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         }
         else if(e.getActionCommand().equals("REFRESH")){
             System.out.println(" REFRESH");
-            if(isWork()&&Input_crete3.getJList().getSelectedIndex()<0){
+            if(isWork()){
                 System.out.println("Is Refresh");
-                setDataBar();
-                //setTable();
-                setColoerTable();
-                table.repaint();
-            }
-            else if(isWork()&&Input_crete3.getJList().getSelectedIndex()>=0){
-                System.out.println("Refresh for Rain");
-                setColoerTable();
-                table.repaint();
+                Calling_Met_Data();
             }
             else{
                 System.out.println("None Data");
@@ -187,6 +185,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
                 System.out.println("natural rain");
                 if(isWork()){
                     Natural_rain();
+                    Calling_Met_Data();
                 }
                 else{System.out.println("None Data");}
             }
@@ -415,6 +414,12 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             }
         }
         table.repaint();
+    }
+    private void Calling_Met_Data(){
+                setDataBar();
+                //setTable();
+                setColoerTable();
+                table.repaint();
     }
     public int getDataIntSclect(String Data){
         int num=0;
