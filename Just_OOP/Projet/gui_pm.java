@@ -28,15 +28,27 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     private int arr[] = new int[2]; 
     private String stateInput;
     public int Wginter = 1024,Hginter = 1024;
+    int perLowD;
     gui_pm() {
         SetUp_gui();
         setLayout(new GridLayout(2, 1));
-
+        
         JPanel TopPanel = new JPanel(new BorderLayout());
         JScrollPane scrollPane = new JScrollPane(setup_Tables());
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         TopPanel.add(scrollPane, BorderLayout.CENTER);
+
+        //=======================================
+        JMenuBar menuBar = new JMenuBar();
+        JMenu DataPM = new JMenu("Data");
+        JMenuItem modeItem = new JMenuItem("Reset All Data");
+        modeItem.setActionCommand("RESTE");
+        modeItem.addActionListener(this);
+        DataPM.add(modeItem);
+        menuBar.add(DataPM);
+        TopPanel.add(menuBar,BorderLayout.NORTH);
         add(TopPanel);
+        //===============================
         JPanel DataPanel = new JPanel(new GridLayout(1, 2));
         JPanel DataBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         DataBar.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
@@ -177,7 +189,14 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             if(Input_crete3.getJList().getSelectedIndex()==0){
                 System.out.println("Artificial rain");
                 if(isWork()){
-
+                    setNumLine(10);
+                    Artificial_Rain(5,r,c);
+                    setNumLine(25);
+                    Artificial_Rain(3,r,c);
+                    setNumLine(50);
+                    setDustLow(r, c);
+                    Calling_Met_Data();
+                    table.repaint();
                 }
                 else{System.out.println("None Data");}
             }
@@ -190,6 +209,22 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
                 else{System.out.println("None Data");}
             }
             else{System.out.println("User Not Select Any Rain");}
+        }
+        else if(e.getActionCommand().equals("RESTE")){
+            System.out.println("Data Reset");
+            if(isWork()){
+                ResetDataArr(DustLv);
+                ResetDataArr(population);
+                ResetDataArr(healthy);
+                ResetDataArr(Speople);
+                ResetDataArr(cellColors);
+                ResetDataArr(percentage_Speople);
+                isFlie = !isFlie;isGetPel=!isGetPel;
+                NumData.clear();
+                table.repaint();
+                System.out.println("Data Is Gone");
+            }
+            
         }
         else{
             System.out.println("None Button");
@@ -205,7 +240,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
    
     private JTable setup_Tables() {
         int numRows = 1;
-        table = new JTable(40, 20){
+        table = new JTable(40, 20 ){
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false; 
@@ -323,7 +358,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         String data = String.format("%.2f %%",  Data[row][col]);
         Box.setValue(data);
     }
-    public boolean isRigthRandom(){
+    private boolean isRigthRandom(){
         if(arr[0]<=0||arr[1]<=0){
             stateInput = "Numbers starting with 0 are not allowed.";
             return false;
@@ -338,7 +373,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             return true;
         }
     }
-    public void setnumInput(String Data){
+    private void setnumInput(String Data){
         String [] DInput = Data.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
         int oio=0;
         try{
@@ -353,18 +388,18 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
           System.out.println(e.getMessage());
         }
     }
-    public void setDustData(){
+    private void setDustData(){
         int ioi=0;
         for (int r = 0; r < table.getRowCount(); r++) {
             for (int c = 0; c < table.getColumnCount(); c++) {
-                table.setValueAt(ioi+1, r, c); 
+                table.setValueAt((ioi+1), r, c); 
                 DustLv[r][c] = NumData.get(ioi);
                 ioi++;
             }
         }
         System.out.println("Data count::"+NumData.size());
     }
-    public void setRandomHuman(int min,int max){
+    private void setRandomHuman(int min,int max){
         List<Integer> nums = IntStream.rangeClosed(min, max).boxed().collect(Collectors.toList());
         Collections.shuffle(nums);
         Random ranNum = new Random();
@@ -375,7 +410,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             }
         }
     }
-    public void setDataBar(){
+    private void setDataBar(){
         for (int r = 0; r < healthy.length; r++) {
             for (int c = 0; c < healthy[r].length ;c++) {
                 percentage_Speople[r][c] = getPercent(DustLv[r][c]);
@@ -384,7 +419,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             }
         }
     }
-    public double getPercent(int Dust){
+    private double getPercent(int Dust){
         double   minPatients ,maxPatients,Drate,MaxP=0,MinP=0,Datamin=0,DataMax=0;
         if(Dust>=0&&Dust<=50){
             MaxP = 9;MinP=0;Datamin=0;DataMax=9;
@@ -404,7 +439,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
          //System.out.println(Drate);
         return (minPatients + (Drate*(maxPatients-minPatients)))*100;
     }
-    public void setColoerTable(){
+    private void setColoerTable(){
         for (int r = 0; r < table.getRowCount(); r++) {
             for (int c = 0; c < table.getColumnCount(); c++) {
                 if(percentage_Speople[r][c]<=9){cellColors[r][c] = Color.GREEN;}
@@ -471,5 +506,53 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             return false;
         }
     }
+    private void ResetDataArr(int[][]num){
+        for(int i=0;i<num.length;i++){
+            Arrays.fill(num[i], 0);
+        }
+    }
+    private void ResetDataArr(double[][]num){
+        for(int i=0;i<num.length;i++){
+            Arrays.fill(num[i], 0);
+        }
+    }
+    private void ResetDataArr(Color[][]num){
+        for(int i=0;i<num.length;i++){
+            Arrays.fill(num[i], Color.WHITE);
+        }
+    }
+    private void Artificial_Rain(int range,int row,int col){
+        int offset = range/2;
+        int minRow = Math.max(0, row - offset);
+        int maxRow = Math.min(40 - 1, row + offset);
+        int minCol = Math.max(0, col - offset);
+        int maxCol = Math.min(20 - 1, col + offset);
+        SetcolorForArtificial(maxRow,minRow,maxCol,minCol);
+
+    }
+    private void SetcolorForArtificial(int Maxrow,int Minrow,int Maxcol,int Mincol){
+        for(int r=Minrow;r<=Maxrow;r++){
+            for(int c=Mincol;c<=Maxcol;c++){
+                if(r==Minrow||c==Mincol||r==Maxrow||c==Maxcol){
+                    setDustLow(r,c);
+                }
+            }
+        }
+    }
+    private void setDustLow(int r,int c){
+        int getDelDust=DustLv[r][c]*perLowD/100;
+        if((DustLv[r][c]-getDelDust)>0){
+            DustLv[r][c]=DustLv[r][c]-getDelDust;
+        }
+        else{
+            DustLv[r][c]=0;
+        }
+        
+        //DustLv[r][c]=DustLv[r][c]-20;
+    }
+    public void setNumLine(int x){
+        perLowD = x;
+    }
+
 }
 
