@@ -10,35 +10,43 @@ import java.util.*;
 import java.util.List;
 import java.awt.event.*;
 public class gui_pm extends JFrame implements ActionListener,MouseListener{
-    private JPanel TopPanel,DataPanel,DataBar,DataUuser;
+    // ชุด Panel ต่างๆ
+    private JPanel TopPanel,DataPanel,DataBar,DataUuser; 
+    // ตัวแปรไฟล์
     private File selectedFile;
+    // ตัวแปรตาราง
     private JTable table;
         //Dust levels || population(2) || number of healthy(3) || sick people(4) || percentage of sick people(5)
     private jpaleBox Box_crete,Box_crete2,Box_crete3,Box_crete4,Box_crete5,Box_AdrTable;
+    // ตัวแปรสำหรับการส่งค่าและการทำงานของผู้ใช้
     private InputBox Input_crete1,Input_crete2,Input_crete3;
+    // คลังข้อมูลจากไฟล์
     private ArrayList <Integer> NumData = new ArrayList<>();
+    // อาเรย์สำหรับฝน
     private String [] Rain = {"Artificial rain", "natural rain"};
-    private int[][]DustLv;
-    private int[][]population;
-    private int[][]healthy;
-    private int[][]Speople;
-    private double[][] percentage_Speople;
-    private Color[][] cellColors;
-    private boolean isFlie = false,isGetPel = false;
-    private int arr[] = new int[2]; 
-    private String stateInput;
+    private int[][]DustLv;//อาเรย์ 2D เก็บข้อมูล ฝุ่น
+    private int[][]population;//อาเรย์ 2D เก็บข้อมูล ประชากร
+    private int[][]healthy; //อาเรย์ 2D เก็บข้อมูล ประชากรที่สุขภาพดี
+    private int[][]Speople; //อาเรย์ 2D เก็บข้อมูล ประชากรที่ป่วย
+    private double[][] percentage_Speople; //อาเรย์ 2D เก็บข้อมูล ประชากรที่ป่วยแบบเปอร์เซ็นต์
+    private Color[][] cellColors; //อาเรย์ 2D เก็บข้อมูลสีพื้นที่
+    private boolean isFlie = false,isGetPel = false; //ตัวแปลการเช็คการทำงาน
+    private int arr[] = new int[2];  //อาเรย์ เก็บเลขที่เอาไว้สุ่มประชากร
+    private String stateInput; //ตัวแปลส่งข้อมูลสถานะในการทำงานของผู้ใช้
     public int Wginter = 1024,Hginter = 1024;
-    int perLowD;
+    int perLowD; //ตัวแปลเลขที่เอาไว้คำนวณ ของฝนเทียม
     gui_pm() {
+        //==================================
+        // เริ่ม GUI เค้าโครง
         SetUp_gui();
         setLayout(new GridLayout(2, 1));
-        
         JPanel TopPanel = new JPanel(new BorderLayout());
         JScrollPane scrollPane = new JScrollPane(setup_Tables());
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         TopPanel.add(scrollPane, BorderLayout.CENTER);
-
+        set_up_Number_Table();
         //=======================================
+        // เริ่มใส่ menuBar เริ่มเพิ่ม Panel
         JMenuBar menuBar = new JMenuBar();
         JMenu DataPM = new JMenu("Data");
         JMenuItem modeItem = new JMenuItem("Reset All Data");
@@ -49,11 +57,15 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         TopPanel.add(menuBar,BorderLayout.NORTH);
         add(TopPanel);
         //===============================
+        // เพิ่ม Panel เฉพาะการทำงานต่างๆ โดยแยก Panel อีกที่เพื่อแบ่งออก
         JPanel DataPanel = new JPanel(new GridLayout(1, 2));
         JPanel DataBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         DataBar.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         JPanel DataUuser = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         DataUuser.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+
+        //================================
+        // ชุดการสร้าง com โดยใช้ class jpaleBox ในการอำนวย และเพิ่มเข้าไปที่ Panel
         Box_AdrTable = new jpaleBox("Table On", "None Select");
          Box_crete =  new jpaleBox("Dust levels", "None Data Output");
          Box_crete2 = new jpaleBox("population", "None Data Output");
@@ -68,6 +80,8 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         DataBar.add(Box_crete5);
         
         //================================
+        //ปุ่มหลัก สร้างแยกเพราะว่าต้องการให้ปุ่มนี้แยกอออกมาเดียวๆและโดดจากชุดอื่นๆ
+        //ปุ่มนี้ทำหน้าที่ import Flie ฝุ่น
         JButton ImporBTN = new JButton("Import Data");
         ImporBTN.setPreferredSize(new Dimension(250, 35));
         ImporBTN.setMaximumSize(new Dimension(Short.MAX_VALUE, 35));
@@ -76,6 +90,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         ImporBTN.addActionListener(this);
 
         //================================
+        //ปุ่มนี้ทำหน้าในการรีเฟดข้อมูลใหม่ กรณีที่ทำอะไรบ้างอย่างแล้วไม่มีการเปลี่ยนแปลง
         JButton DataCal = new JButton("Refresh");
         DataCal.setPreferredSize(new Dimension(250, 35));
         DataCal.setMaximumSize(new Dimension(Short.MAX_VALUE, 10));
@@ -84,6 +99,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         DataCal.addActionListener(this);
 
         //================================
+        //ชุดสร้าง com สำหรับการทำงานของผู้ใช้ โดยมีกำหนดประชากร และ สุ่มแบบไม่ซ้ำ
         DataUuser.add(ImporBTN);
         DataUuser.add(DataCal);
         Input_crete1 = new InputBox("Determine the population.","Submit population");
@@ -110,6 +126,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         // gui_pm fun = new gui_pm("My");
         // System.out.println(fun.isSamevalue(10));
     }
+   // Method สำหรับในการเช็คว่าสามารถคำนวณค่าเลยได้ไหม ป้องกันการคำนวณที่ผิดพลาด เพราะข้อมูลไม่พร้อม 
     public void isCanbecolor(){
         if(isWork()){
                 System.out.println("Is Done");
@@ -118,8 +135,27 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
                 setColoerTable();
             }
     }
+    //Method ในการถามว่า ตัวแปรนี้พร้อมหรือยังเพื่อดำเนินการกับ Method อื่นๆ 
     public boolean isWork(){
         return isFlie&isGetPel;
+    }
+    // Method นี้เป็นชุดรวม Method ของการทำงานของฝนเทียม
+    private void toArtificial(int r,int c){
+                    setNumDamgeDust(10);
+                    Artificial_Rain(5,r,c);
+                    setNumDamgeDust(25);
+                    Artificial_Rain(3,r,c);
+                    setNumDamgeDust(50);
+                    setDustLow(r, c);
+                    Calling_Met_Data();
+                    table.repaint();
+    }
+    // Method นี้เป็นชุดรวม ในการคำนวณข้อมูลต่างๆ
+    private void Calling_Met_Data(){
+                setDataBar();
+                //setTable();
+                setColoerTable();
+                table.repaint();
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -189,14 +225,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             if(Input_crete3.getJList().getSelectedIndex()==0){
                 System.out.println("Artificial rain");
                 if(isWork()){
-                    setNumLine(10);
-                    Artificial_Rain(5,r,c);
-                    setNumLine(25);
-                    Artificial_Rain(3,r,c);
-                    setNumLine(50);
-                    setDustLow(r, c);
-                    Calling_Met_Data();
-                    table.repaint();
+                   toArtificial(r,c);
                 }
                 else{System.out.println("None Data");}
             }
@@ -230,6 +259,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             System.out.println("None Button");
         }
     }
+    // Method เริ่มต้น GUI แทบทุกอย่างเริ่มจากที่นี้
     private void SetUp_gui(){
         setTitle("OOP_ASS1");
         setSize(Wginter, Hginter);
@@ -237,7 +267,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-   
+    // Method ชุดสร้างตาราง
     private JTable setup_Tables() {
         int numRows = 1;
         table = new JTable(40, 20 ){
@@ -276,8 +306,9 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         //table.setFocusable(false);
         return table;  
     } 
-    public void setTable(){
-        int Adr=0;
+    // Method ในการแสดงและใส่ลำดับในตาราง
+    private void set_up_Number_Table(){
+        int Adr=1;
         for (int r = 0; r < table.getRowCount(); r++) {
             for (int c = 0; c < table.getColumnCount(); c++) {
                 table.setValueAt(Adr, r, c); 
@@ -285,10 +316,8 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             }
         }
     }
-    public String getData(InputBox Input){
-        return Input.getDataFromTextField();
-    }
-    public void openFile() {
+    // Method สำหรับการเปิดไฟล์
+    private void openFile() {
     // 1. สร้าง JFileChooser
         JFileChooser fileChooser = new JFileChooser();
 
@@ -325,6 +354,8 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             System.out.println("User didn't open");
         }
     }
+
+    //============================================
     @Override public void mouseEntered(MouseEvent e) {}
     @Override public void mouseExited(MouseEvent e) {}
     @Override public void mousePressed(MouseEvent e) {}
@@ -343,21 +374,26 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
                     sendDatatoBar(row,col,Box_crete5,percentage_Speople);
                 }
     }
+    //================================================
+
+    //Method สำหรับในการแสดงตำแหน่งที่ผู้ใช้คลิกอยู่ว่าที่ช่องเท่าไหร่
     private void onCellSelected(int row, int col,jpaleBox Box) {
         int cellNumber = (row * 20) + col + 1;
         Box.setValue(Integer.toString(cellNumber));
 
     }
+    // Method ในการส่งข้อมูลขึ้นอินเตอร์เฟคของ int
     private void sendDatatoBar(int row,int col,jpaleBox Box,int [][]Data){
         String data = String.format("%d",  Data[row][col]);
         Box.setValue(data);
     }
-    //Double
+    // Method ในการส่งข้อมูลขึ้นอินเตอร์เฟคของ Double
     private void sendDatatoBar(int row,int col,jpaleBox Box,double [][]Data){
         
         String data = String.format("%.2f %%",  Data[row][col]);
         Box.setValue(data);
     }
+    // Mehod ในการเช็คว่าตัวข้อความที่ผู้ใช้ Input เข้ามาว่าเป็นตัวเลขไหม
     private boolean isRigthRandom(){
         if(arr[0]<=0||arr[1]<=0){
             stateInput = "Numbers starting with 0 are not allowed.";
@@ -373,6 +409,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             return true;
         }
     }
+    // Method ในการตัดและแยกข้อความออกและเก็บเฉพาะที่เป็นตัวเลขเท่านั้น
     private void setnumInput(String Data){
         String [] DInput = Data.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
         int oio=0;
@@ -388,19 +425,28 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
           System.out.println(e.getMessage());
         }
     }
+    // Method สำหรับการส่งค่าข้อมูลระดับฝุ่นในให้ตัวข้อมูลจากคลังข้อมูลที่อ่านไฟล์มาแล้ว
     private void setDustData(){
         int ioi=0;
         for (int r = 0; r < table.getRowCount(); r++) {
             for (int c = 0; c < table.getColumnCount(); c++) {
-                table.setValueAt((ioi+1), r, c); 
                 DustLv[r][c] = NumData.get(ioi);
                 ioi++;
             }
         }
         System.out.println("Data count::"+NumData.size());
     }
+    // Method ในการสุ่มประชากร
     private void setRandomHuman(int min,int max){
+        // บรรทัดที่ 1: สร้าง List เรียงลำดับ
         List<Integer> nums = IntStream.rangeClosed(min, max).boxed().collect(Collectors.toList());
+        /*
+        IntStream.rangeClosed(min, max)
+        สร้าง Stream ของตัวเลขชนิด int (primitive) เรียงตามลำดับตั้งแต่ min ไปจนถึง max โดยรวมตัวสุดท้ายด้วย
+        (ตัวอย่าง: ถ้า min = 1, max = 5 จะได้ลำดับ 1, 2, 3, 4, 5)
+        .boxed()
+        แปลงชนิดข้อมูลจาก primitive int ให้เป็น Object Integer (Wrapper Class) เนื่องจาก Collection ใน Java รองรับเฉพาะวัตถุ (Object) เท่านั้น */
+        // บรรทัดที่ 2: สับเปลี่ยนลำดับแบบสุ่ม
         Collections.shuffle(nums);
         Random ranNum = new Random();
         int index=0;
@@ -410,6 +456,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             }
         }
     }
+    // Method ในการคำนวณค่าข้อมูลต่างๆ
     private void setDataBar(){
         for (int r = 0; r < healthy.length; r++) {
             for (int c = 0; c < healthy[r].length ;c++) {
@@ -419,6 +466,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             }
         }
     }
+    // Method คำนวณ เปอร์เซ็นต์
     private double getPercent(int Dust){
         double   minPatients ,maxPatients,Drate,MaxP=0,MinP=0,Datamin=0,DataMax=0;
         if(Dust>=0&&Dust<=50){
@@ -439,6 +487,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
          //System.out.println(Drate);
         return (minPatients + (Drate*(maxPatients-minPatients)))*100;
     }
+    // Method เอาสีเข้าคลังข้อมูลแล้วค่อยส่งลงตาราง
     private void setColoerTable(){
         for (int r = 0; r < table.getRowCount(); r++) {
             for (int c = 0; c < table.getColumnCount(); c++) {
@@ -450,13 +499,8 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         }
         table.repaint();
     }
-    private void Calling_Met_Data(){
-                setDataBar();
-                //setTable();
-                setColoerTable();
-                table.repaint();
-    }
-    public int getDataIntSclect(String Data){
+    // Method ดึงค่าตัวอักษณมาเป็นตัวเลข
+    private int getDataIntSclect(String Data){
         int num=0;
         try {
             num = Integer.parseInt(Data);
@@ -466,7 +510,8 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         }
         return num;
     }
-    public boolean isNumic(String Data){
+    // Method เช็คว่าเป็นเลขจริงหรือไม่ (กันการส่ง  Exception หาผู้ใช้)
+    private boolean isNumic(String Data){
         int num=0;
         try {
             num = Integer.parseInt(Data);
@@ -476,6 +521,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         }
         
     }
+    // Method ส่งการขึ้นเตือนเกี่ยวกับ Input ของผู้ใช้
     private void setpopulation(int row,int col,int data){
         if(data<=0){
             stateInput = "Equal to or less than 0 is not allowed.";
@@ -484,6 +530,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         population[row][col] = data;
         stateInput = "Data entry completed.";
     }
+    // Method ในการคำนวณ ผลกระทบของฝุ่นที่โดนฝนธรรมชาติ
     private void Natural_rain(){
         int Num=0;
         for(int r=0;r<DustLv.length;r++){
@@ -498,7 +545,8 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             }
         }
     }
-    public boolean isZero(int x,int y){
+    // Method ที่เอาไว้คำนวณค่าว่าเป็น 0 หรือไม่ ป้องกันเลขติดลบ
+    private boolean isZero(int x,int y){
         if((x-y)>0){
             return true;
         }
@@ -506,31 +554,36 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             return false;
         }
     }
+    // Method สำหรับการลบค่าและคืนค่าเป็นหมือนเดิม int
     private void ResetDataArr(int[][]num){
         for(int i=0;i<num.length;i++){
             Arrays.fill(num[i], 0);
         }
     }
+    // Method สำหรับการลบค่าและคืนค่าเป็นหมือนเดิม double
     private void ResetDataArr(double[][]num){
         for(int i=0;i<num.length;i++){
             Arrays.fill(num[i], 0);
         }
     }
+    // Method สำหรับการลบค่าและคืนค่าเป็นหมือนเดิม Color
     private void ResetDataArr(Color[][]num){
         for(int i=0;i<num.length;i++){
             Arrays.fill(num[i], Color.WHITE);
         }
     }
+    //  Method ในการคำนวณ ระยะในการส่งผลต่อผลของ ฝนเทียม
     private void Artificial_Rain(int range,int row,int col){
         int offset = range/2;
         int minRow = Math.max(0, row - offset);
         int maxRow = Math.min(40 - 1, row + offset);
         int minCol = Math.max(0, col - offset);
         int maxCol = Math.min(20 - 1, col + offset);
-        SetcolorForArtificial(maxRow,minRow,maxCol,minCol);
+        SetDustForArtificial(maxRow,minRow,maxCol,minCol);
 
     }
-    private void SetcolorForArtificial(int Maxrow,int Minrow,int Maxcol,int Mincol){
+    // Method ในการเปลี่ยนแปลงค่าของฝุ่น
+    private void SetDustForArtificial(int Maxrow,int Minrow,int Maxcol,int Mincol){
         for(int r=Minrow;r<=Maxrow;r++){
             for(int c=Mincol;c<=Maxcol;c++){
                 if(r==Minrow||c==Mincol||r==Maxrow||c==Maxcol){
@@ -539,6 +592,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
             }
         }
     }
+    // Method คำนวณค่าเปอร์เซ็นที่ควรลดและเช็คเพื่อป้องเลขติดลบ
     private void setDustLow(int r,int c){
         int getDelDust=DustLv[r][c]*perLowD/100;
         if((DustLv[r][c]-getDelDust)>0){
@@ -550,7 +604,8 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         
         //DustLv[r][c]=DustLv[r][c]-20;
     }
-    public void setNumLine(int x){
+    // Method สำหรับในการเปลี่ยนค่าในการคำนวณเปอร์เซ็นต์
+    public void setNumDamgeDust(int x){
         perLowD = x;
     }
 
