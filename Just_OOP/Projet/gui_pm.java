@@ -461,7 +461,9 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         for (int r = 0; r < healthy.length; r++) {
             for (int c = 0; c < healthy[r].length ;c++) {
                 percentage_Speople[r][c] = getPercent(DustLv[r][c]);
-                Speople[r][c] = (int)(population[r][c]* percentage_Speople[r][c])/100;
+
+                Speople[r][c] = (int)Math.round((population[r][c]* percentage_Speople[r][c])/100);
+
                 healthy[r][c] = population[r][c] - Speople[r][c];
             }
         }
@@ -470,7 +472,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     private double getPercent(int Dust){
         double   minPatients ,maxPatients,Drate,MaxP=0,MinP=0,Datamin=0,DataMax=0;
         if(Dust>=0&&Dust<=50){
-            MaxP = 9;MinP=0;Datamin=0;DataMax=9;
+            MaxP = 9;MinP=0;Datamin=0;DataMax=50;
         }
         else if(Dust>50&&Dust<=100){
             MaxP = 19;MinP=10;Datamin=51;DataMax=100;
@@ -481,11 +483,14 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         else if(Dust>150){
             MaxP = 50;MinP=30;Datamin=151;DataMax=250;
         }
-         minPatients = (MinP / 100);
-         maxPatients = (MaxP / 100);
-         Drate = (Dust-Datamin)/(DataMax-Datamin);
+        else{
+            return 0;
+        }
+         minPatients = MinP;
+         maxPatients = MaxP;
+         Drate = (double)(Dust-Datamin)/(DataMax-Datamin);
          //System.out.println(Drate);
-        return (minPatients + (Drate*(maxPatients-minPatients)))*100;
+        return (minPatients + (Drate*(maxPatients-minPatients)));
     }
     // Method เอาสีเข้าคลังข้อมูลแล้วค่อยส่งลงตาราง
     private void setColoerTable(){
@@ -524,7 +529,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     // Method ส่งการขึ้นเตือนเกี่ยวกับ Input ของผู้ใช้
     private void setpopulation(int row,int col,int data){
         if(data<=0){
-            stateInput = "Equal to or less than 0 is not allowed.";
+            stateInput = "Equal to or less than 0 or Text is not allowed.";
             return;
         }
         population[row][col] = data;
