@@ -34,7 +34,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     private int arr[] = new int[2];  //อาเรย์ เก็บเลขที่เอาไว้สุ่มประชากร
     private String stateInput; //ตัวแปลส่งข้อมูลสถานะในการทำงานของผู้ใช้
     public int Wginter = 1024,Hginter = 1024;
-    int perLowD; //ตัวแปลเลขที่เอาไว้คำนวณ ของฝนเทียม
+    private int perLowD; //ตัวแปลเลขที่เอาไว้คำนวณ ของฝนเทียม
     gui_pm() {
         //==================================
         // เริ่ม GUI เค้าโครง
@@ -171,7 +171,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
              int numData;
             int r = table.getSelectedRow();
             int c = table.getSelectedColumn();
-            int cellNumber = (r * 20) + c + 1;
+            int cellNumber = (r * 40) + c + 1;
             String Output = String.format("User On cell %d or on Row:: %d and Col:: %d",cellNumber,r,c);
             System.out.println(Output);
             if(!((r != -1) && (c != -1))){
@@ -190,6 +190,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
                 Input_crete1.showTemporaryText(stateInput);
                 System.out.println("Not Human");
             }
+            Det=null;
             
         }
         else if(e.getActionCommand().equals("RANDOM")){
@@ -219,7 +220,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
         else if(e.getActionCommand().equals("RAIN")){
             int r = table.getSelectedRow();
             int c = table.getSelectedColumn();
-            int cellNumber = (r * 20) + c + 1;
+            int cellNumber = (r * 40) + c + 1;
             String Output = String.format("User On cell %d or on Row:: %d and Col:: %d",cellNumber,r,c);
             System.out.println(Output); 
             if(Input_crete3.getJList().getSelectedIndex()==0){
@@ -270,7 +271,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     // Method ชุดสร้างตาราง
     private JTable setup_Tables() {
         int numRows = 1;
-        table = new JTable(40, 20 ){
+        table = new JTable(20, 40 ){
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false; 
@@ -378,7 +379,7 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
 
     //Method สำหรับในการแสดงตำแหน่งที่ผู้ใช้คลิกอยู่ว่าที่ช่องเท่าไหร่
     private void onCellSelected(int row, int col,jpaleBox Box) {
-        int cellNumber = (row * 20) + col + 1;
+        int cellNumber = (row * 40) + col + 1;
         Box.setValue(Integer.toString(cellNumber));
 
     }
@@ -579,11 +580,11 @@ public class gui_pm extends JFrame implements ActionListener,MouseListener{
     }
     //  Method ในการคำนวณ ระยะในการส่งผลต่อผลของ ฝนเทียม
     private void Artificial_Rain(int range,int row,int col){
-        int offset = range/2;
+        int offset = (int)range/2;
         int minRow = Math.max(0, row - offset);
-        int maxRow = Math.min(40 - 1, row + offset);
+        int maxRow = Math.min(20 - 1, row + offset);
         int minCol = Math.max(0, col - offset);
-        int maxCol = Math.min(20 - 1, col + offset);
+        int maxCol = Math.min(40 - 1, col + offset);
         SetDustForArtificial(maxRow,minRow,maxCol,minCol);
 
     }

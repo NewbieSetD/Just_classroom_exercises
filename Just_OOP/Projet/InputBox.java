@@ -88,9 +88,7 @@ public class InputBox extends JPanel {
         DataInput.setForeground(cor);
         DataInput.setText(data);
     }
-    public JTextField getTextField(){
-        return DataInput;
-    }
+
     public String getDataFromTextField(){
         return DataInput.getText().trim();
     }
